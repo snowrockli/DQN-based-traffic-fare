@@ -1,12 +1,12 @@
 function [u1,u2]=f_utility(risk,rp,xx1,xx2,px1,px2,dn,alfa,beita,lamada,i,j)
-%=====================Éè¶¨²ÎÕÕµã===========
+%=====================è®¾å®šå‚ç…§ç‚¹===========
 u0(i,j)=min(rp)+risk(i,j)*(max(rp)-min(rp));
-%==========µØÌúÇ°¾°Ğ§ÓÃ=====================
+%==========æ–¹å¼1å‰æ™¯æ•ˆç”¨=====================
 for k=1:dn
     if xx1(k)<=u0(i,j)
-        vg1(k)=(u0(i,j)-xx1(k))^alfa;%ÊÕÒæ
+        vg1(k)=(u0(i,j)-xx1(k))^alfa;%æ”¶ç›Š
     else
-        vg1(k)=-lamada*(xx1(k)-u0(i,j))^beita;%ËğÊ§
+        vg1(k)=-lamada*(xx1(k)-u0(i,j))^beita;%æŸå¤±
     end
 end
 if xx1(1)>=u0(i,j)
@@ -16,26 +16,26 @@ elseif xx1(dn)<=u0(i,j)
 end
 for k=2:dn
     if vg1(k-1)>=0&&vg1(k)<0
-        kstar=k;%¼ÇÂ¼²Î¿¼µãÖ®ºóµÄµÚÒ»¸öÎ»ÖÃ
+        kstar=k;%è®°å½•å‚è€ƒç‚¹ä¹‹åçš„ç¬¬ä¸€ä¸ªä½ç½®
     end
 end
 Futility11=0;
 for k=kstar:dn
     wp11=wwww(sum(px1(k:dn)))-wwww(sum(px1(k+1:dn)));
-    Futility11=Futility11+vg1(k)*wp11;%ËğÊ§
+    Futility11=Futility11+vg1(k)*wp11;%æŸå¤±
 end
 Futility12=0;
 for k=1:kstar-1
     wp12=wwww(sum(px1(1:k)))-wwww(sum(px1(1:k-1)));
-    Futility12=Futility12+vg1(k)*wp12;%ÊÕÒæ
+    Futility12=Futility12+vg1(k)*wp12;%æ”¶ç›Š
 end
-u1=Futility11+Futility12;%µØÌúÇ°¾°Ğ§ÓÃ
-%===================¹«½»Ç°¾°Ğ§ÓÃ==============
+u1=Futility11+Futility12;%å‰æ™¯æ•ˆç”¨
+%===================æ–¹å¼2å‰æ™¯æ•ˆç”¨==============
 for k=1:dn
     if xx2(k)<=u0(i,j)
-        vg2(k)=(u0(i,j)-xx2(k))^alfa;%ÊÕÒæ
+        vg2(k)=(u0(i,j)-xx2(k))^alfa;%æ”¶ç›Š
     else
-        vg2(k)=-lamada*(xx2(k)-u0(i,j))^beita;%ËğÊ§
+        vg2(k)=-lamada*(xx2(k)-u0(i,j))^beita;%æŸå¤±
     end
 end
 if xx2(1)>=u0(i,j)
@@ -45,19 +45,19 @@ elseif xx2(dn)<=u0(i,j)
 end
 for k=2:dn
     if vg2(k-1)>=0&&vg2(k)<0
-        kstar=k;%¼ÇÂ¼²Î¿¼µãÖ®ºóµÄµÚÒ»¸öÎ»ÖÃ
+        kstar=k;%è®°å½•å‚è€ƒç‚¹ä¹‹åçš„ç¬¬ä¸€ä¸ªä½ç½®
     end
 end
 Futility21=0;
 for k=kstar:dn
     wp21=wwww(sum(px2(k:dn)))-wwww(sum(px2(k+1:dn)));
-    Futility21=Futility21+vg2(k)*wp21;%ËğÊ§
+    Futility21=Futility21+vg2(k)*wp21;%æŸå¤±
 end
 Futility22=0;
 for k=1:kstar-1
     wp22=wwww(sum(px2(1:k)))-wwww(sum(px2(1:k-1)));
-    Futility22=Futility22+vg2(k)*wp22;%ÊÕÒæ
+    Futility22=Futility22+vg2(k)*wp22;%æ”¶ç›Š
 end
-u2=Futility21+Futility22;%¹«½»Ç°¾°Ğ§ÓÃ
+u2=Futility21+Futility22;%å‰æ™¯æ•ˆç”¨
 
 end
