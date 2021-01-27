@@ -1,121 +1,121 @@
-%=======================agent-logitÄ£ĞÍ================
+%=======================agent-logitæ¨¡å‹================
 clc
 clear
 close all
 load network
-T_DQN=400;%Ç¿»¯Ñ§Ï°µü´ú´ÎÊı
-keseip=0.6;%¼Û¸ñÃô¸ĞÏµÊı
-theita=0.15;%Ğ§ÓÃ¸ĞÖªÏµÊı
-gama=0.8;%Ç¿»¯Ñ§Ï°ÂÊ
-epsilon(1)=0.3;%ËÑË÷²ßÂÔ
-final_epsilon=0.01;%µ± epsilon Ğ¡ÓÚ¸ÃÖµÊ±£¬½«²»ÔÚËæ»úÑ¡ÔñĞĞÎª
+T_DQN=400;%å¼ºåŒ–å­¦ä¹ è¿­ä»£æ¬¡æ•°
+keseip=0.6;%ä»·æ ¼æ•æ„Ÿç³»æ•°
+theita=0.15;%æ•ˆç”¨æ„ŸçŸ¥ç³»æ•°
+gama=0.8;%å¼ºåŒ–å­¦ä¹ ç‡
+epsilon(1)=0.3;%æœç´¢ç­–ç•¥
+final_epsilon=0.01;%å½“ epsilon å°äºè¯¥å€¼æ—¶ï¼Œå°†ä¸åœ¨éšæœºé€‰æ‹©è¡Œä¸º
 %basic_num=T_DQN/5;
 basic_num=100;
-%========Ç°¾°Ğ§ÓÃ²ÎÊı=======
-pc=0;%½»»¥Ç¿¶È
-rou=0.5;%³öĞĞ¿É¿¿ĞÔµÄÒªÇó,ÕûÌå·çÏÕÌ¬¶È
-cl=0.98;%ÖÃĞÅË®Æ½
-dn=5;%ÖÃĞÅÇø¼äµÈ·ÖÊı
-alfa=0.88;%·çÏÕ¹æ±Ü³Ì¶È
-beita=0.88;%·çÏÕÆ«ºÃ³Ì¶È
-lamada=2.25;%·çÏÕ¹æ±ÜÏµÊı
-%==========³õÊ¼²ÎÊı=========
+%========å‰æ™¯æ•ˆç”¨å‚æ•°=======
+pc=0;%äº¤äº’å¼ºåº¦
+rou=0.5;%å‡ºè¡Œå¯é æ€§çš„è¦æ±‚,æ•´ä½“é£é™©æ€åº¦
+cl=0.98;%ç½®ä¿¡æ°´å¹³
+dn=5;%ç½®ä¿¡åŒºé—´ç­‰åˆ†æ•°
+alfa=0.88;%é£é™©è§„é¿ç¨‹åº¦
+beita=0.88;%é£é™©åå¥½ç¨‹åº¦
+lamada=2.25;%é£é™©è§„é¿ç³»æ•°
+%==========åˆå§‹å‚æ•°=========
 min_p1=0;
 max_p1=15;
-p1(1)=5;%µØÌú³õÊ¼¼Û¸ñ
+p1(1)=5;%åœ°é“åˆå§‹ä»·æ ¼
 min_p2=0;
 max_p2=10;
-p2(1)=1;%¹«½»³õÊ¼¼Û¸ñ
-t1=1;%µØÌúĞĞ³ÌÊ±¼ä
-t2=3;%¹«½»ĞĞ³ÌÊ±¼ä
-c1=2;%µØÌúÊæÊÊ¶È³É±¾
-c2=3;%¹«½»ÊæÊÊ¶È³É±¾
-b1=4;%µØÌúµ¥Î»³É±¾
-b2=1;%¹«½»µ¥Î»³É±¾
+p2(1)=1;%å…¬äº¤åˆå§‹ä»·æ ¼
+t1=1;%åœ°é“è¡Œç¨‹æ—¶é—´
+t2=3;%å…¬äº¤è¡Œç¨‹æ—¶é—´
+c1=2;%åœ°é“èˆ’é€‚åº¦æˆæœ¬
+c2=3;%å…¬äº¤èˆ’é€‚åº¦æˆæœ¬
+b1=4;%åœ°é“å•ä½æˆæœ¬
+b2=1;%å…¬äº¤å•ä½æˆæœ¬
 
-fai1=0.2;%µØÌú±äÒìÏµÊı
-fai2=0.3;%¹«½»±äÒìÏµÊı
-celllength=celllength1;%³öĞĞÕßÈºÌå¹æÄ£
-risk=rand(celllength,celllength);%·çÏÕÌ¬¶È¾ØÕó
-risk(risk>0.5)=0.75;%³õÊ¼·çÏÕ°®ºÃ
-risk(risk<=0.5)=0.25;%³õÊ¼·çÏÕ¹æ±Ü
-% risk(risk>0.5)=0.5;%³õÊ¼·çÏÕ°®ºÃ
-% risk(risk<=0.5)=0.5;%³õÊ¼·çÏÕ¹æ±Ü
-risk_num1(1)=numel(risk(risk==0.75))/10;%·çÏÕ°®ºÃÕßÈËÊı 
-risk_num2(1)=numel(risk(risk==0.25))/10;%·çÏÕ¹æ±ÜÕßÈËÊı
+fai1=0.2;%åœ°é“å˜å¼‚ç³»æ•°
+fai2=0.3;%å…¬äº¤å˜å¼‚ç³»æ•°
+celllength=celllength1;%å‡ºè¡Œè€…ç¾¤ä½“è§„æ¨¡
+risk=rand(celllength,celllength);%é£é™©æ€åº¦çŸ©é˜µ
+risk(risk>0.5)=0.75;%åˆå§‹é£é™©çˆ±å¥½
+risk(risk<=0.5)=0.25;%åˆå§‹é£é™©è§„é¿
+% risk(risk>0.5)=0.5;%åˆå§‹é£é™©çˆ±å¥½
+% risk(risk<=0.5)=0.5;%åˆå§‹é£é™©è§„é¿
+risk_num1(1)=numel(risk(risk==0.75))/10;%é£é™©çˆ±å¥½è€…äººæ•° 
+risk_num2(1)=numel(risk(risk==0.25))/10;%é£é™©è§„é¿è€…äººæ•°
 for i=1:celllength
     for j=1:celllength
-        ww(i,j,1,1)=rand;%³õÊ¼»¯³öĞĞ·½Ê½Ñ¡Ôñ¸ÅÂÊ
+        ww(i,j,1,1)=rand;%åˆå§‹åŒ–å‡ºè¡Œæ–¹å¼é€‰æ‹©æ¦‚ç‡
         ww(i,j,2,1)=1-ww(i,j,1,1);
-        route(i,j,1)=randsrc(1,1,[1:2]);%ÔËÊä·½Ê½
+        route(i,j,1)=randsrc(1,1,[1:2]);%è¿è¾“æ–¹å¼
     end
 end
 q1(1)=numel(find(route(:,:,1)==1))/10;
 q2(1)=numel(find(route(:,:,1)==2))/10;
-A=[-5,-1,0,1,5];%¶¯×÷¼¯:¼Û¸ñµ÷½Ú·ù¶È
-D=[];%¾­Ñé»Ø·Å¼¯ºÏ
-D_train=[];%QÖµÑµÁ·¼¯ºÏ
-%====================³õÊ¼»¯Éñ¾­ÍøÂç============
+A=[-5,-1,0,1,5];%åŠ¨ä½œé›†:ä»·æ ¼è°ƒèŠ‚å¹…åº¦
+D=[];%ç»éªŒå›æ”¾é›†åˆ
+D_train=[];%Qå€¼è®­ç»ƒé›†åˆ
+%====================åˆå§‹åŒ–ç¥ç»ç½‘ç»œ============
 num_sample=T_DQN;
 S_A=rand(num_sample,5);
 Q=rand(num_sample,1);
 net=newff(S_A',Q',11,{'logsig','purelin','traingd'});
-net.trainParam.showWindow = 0;%ÊÇ·ñÕ¹Ê¾´°¿Ú
+net.trainParam.showWindow = 0;%æ˜¯å¦å±•ç¤ºçª—å£
 for t=1:T_DQN
-    %===========ÊäÈë×´Ì¬£¬Êä³öQÖµ================
-    %STATE=[p1(t),p2(t),q1(t),q2(t),risk_num1(t),risk_num2(t)];%×´Ì¬
+    %===========è¾“å…¥çŠ¶æ€ï¼Œè¾“å‡ºQå€¼================
+    %STATE=[p1(t),p2(t),q1(t),q2(t),risk_num1(t),risk_num2(t)];%çŠ¶æ€
     STATE=[p1(t),p2(t),q1(t),q2(t)];
     for a_n=1:length(A)
         x_S_A(:,a_n)=[STATE,A(a_n)]';
-        y_Q(a_n)=sim(net,x_S_A(:,a_n)); %²»Í¬¶¯×÷µÄQÖµ
+        y_Q(a_n)=sim(net,x_S_A(:,a_n)); %ä¸åŒåŠ¨ä½œçš„Qå€¼
     end
-    %===========Ñ¡Ôñ¶¯×÷============
+    %===========é€‰æ‹©åŠ¨ä½œ============
     if rand<epsilon(t)
-        i_star=randi([1,length(A)],1,1);%Ëæ»úÑ¡Ôñ
+        i_star=randi([1,length(A)],1,1);%éšæœºé€‰æ‹©
         A_select=A(i_star);
     else
-        i_star=find(y_Q==max(y_Q));%Ñ¡QÖµ×î´óµÄ
+        i_star=find(y_Q==max(y_Q));%é€‰Qå€¼æœ€å¤§çš„
         A_select=A(i_star(randi([1,length(i_star)],1,1)));
     end
     epsilon(t+1)=epsilon(t)-0.001;
-    %===============Ö´ĞĞÑ¡ÔñµÄ¶¯×÷£¬µÃµ½ĞÂµÄ×´Ì¬===================
-    %===========¸üĞÂ¼Û¸ñ============================
-    p1(t+1)=p1(t)+0.01*A_select*p1(t);%µØÌúµ÷Õû¼Û¸ñ
+    %===============æ‰§è¡Œé€‰æ‹©çš„åŠ¨ä½œï¼Œå¾—åˆ°æ–°çš„çŠ¶æ€===================
+    %===========æ›´æ–°ä»·æ ¼============================
+    p1(t+1)=p1(t)+0.01*A_select*p1(t);%åœ°é“è°ƒæ•´ä»·æ ¼
     
     
     pp1=p1(t);qq1=q1(t);uu1=p1(t+1);
     pp2=p2(t);qq2=q2(t);
     save data qq1 qq2 keseip pp1 pp2 b1 b2 uu1
     [x,fval2]=fminbnd('f2',min_p2,max_p2);
-    p2(t+1)=x;%¹«½»Í¨¹ı²©ŞÄ¸üĞÂ¼Û¸ñ
-    %============¸üĞÂ¿ÍÁ÷===========================
-    %===========»®·ÖĞ¡Çø¼ä============
+    p2(t+1)=x;%å…¬äº¤é€šè¿‡åšå¼ˆæ›´æ–°ä»·æ ¼
+    %============æ›´æ–°å®¢æµ===========================
+    %===========åˆ’åˆ†å°åŒºé—´============
     g1(t)=keseip*p1(t+1)+t1+c1;
     g2(t)=keseip*p2(t+1)+t2+c2;
-    XGMG1=abs(fai1*g1(t));XGMG2=abs(fai2*g2(t));XXGMG1(t)=XGMG1;XXGMG2(t)=XGMG2;%¼ÆËã·½²î
-    AG1=g1(t)-sqrt(XGMG1)*norminv(0.5+0.5*cl,0,1);BG1=g1(t)+sqrt(XGMG1)*norminv(0.5+0.5*cl,0,1);%¼ÆËãÖÃĞÅÇø¼ä
-    AG2=g2(t)-sqrt(XGMG2)*norminv(0.5+0.5*cl,0,1);BG2=g2(t)+sqrt(XGMG2)*norminv(0.5+0.5*cl,0,1);%¼ÆËãÖÃĞÅÇø¼ä
+    XGMG1=abs(fai1*g1(t));XGMG2=abs(fai2*g2(t));XXGMG1(t)=XGMG1;XXGMG2(t)=XGMG2;%è®¡ç®—æ–¹å·®
+    AG1=g1(t)-sqrt(XGMG1)*norminv(0.5+0.5*cl,0,1);BG1=g1(t)+sqrt(XGMG1)*norminv(0.5+0.5*cl,0,1);%è®¡ç®—ç½®ä¿¡åŒºé—´
+    AG2=g2(t)-sqrt(XGMG2)*norminv(0.5+0.5*cl,0,1);BG2=g2(t)+sqrt(XGMG2)*norminv(0.5+0.5*cl,0,1);%è®¡ç®—ç½®ä¿¡åŒºé—´
     for k=0:dn
-        x1(k+1)=AG1+k*(BG1-AG1)/dn;%µØÌúĞ¡Çø¼ä±ß½ç
-        x2(k+1)=AG2+k*(BG2-AG2)/dn;%¹«½»Ğ¡Çø¼ä±ß½ç
+        x1(k+1)=AG1+k*(BG1-AG1)/dn;%åœ°é“å°åŒºé—´è¾¹ç•Œ
+        x2(k+1)=AG2+k*(BG2-AG2)/dn;%å…¬äº¤å°åŒºé—´è¾¹ç•Œ
     end
     for k=0:dn-1
-        xx1(k+1)=AG1+(2*k+1)*(BG1-AG1)/(2*dn);%µØÌúĞ¡Çø¼äÖĞÖµ
-        xx2(k+1)=AG2+(2*k+1)*(BG2-AG2)/(2*dn);%¹«½»Ğ¡Çø¼äÖĞÖµ
-        px1(k+1)=normcdf(x1(k+2),g1(t),sqrt(XGMG1))-normcdf(x1(k+1),g1(t),sqrt(XGMG1));%µØÌú¸ÅÂÊ·Ö²¼
-        px2(k+1)=normcdf(x2(k+2),g2(t),sqrt(XGMG2))-normcdf(x2(k+1),g2(t),sqrt(XGMG2));%¹«½»¸ÅÂÊ·Ö²¼
+        xx1(k+1)=AG1+(2*k+1)*(BG1-AG1)/(2*dn);%åœ°é“å°åŒºé—´ä¸­å€¼
+        xx2(k+1)=AG2+(2*k+1)*(BG2-AG2)/(2*dn);%å…¬äº¤å°åŒºé—´ä¸­å€¼
+        px1(k+1)=normcdf(x1(k+2),g1(t),sqrt(XGMG1))-normcdf(x1(k+1),g1(t),sqrt(XGMG1));%åœ°é“æ¦‚ç‡åˆ†å¸ƒ
+        px2(k+1)=normcdf(x2(k+2),g2(t),sqrt(XGMG2))-normcdf(x2(k+1),g2(t),sqrt(XGMG2));%å…¬äº¤æ¦‚ç‡åˆ†å¸ƒ
     end
-    rp(1)=g1(t)+sqrt(XGMG1)*norminv(rou,0,1);%µØÌúÔ¤Ëã
-    rp(2)=g2(t)+sqrt(XGMG2)*norminv(rou,0,1);%¹«½»Ô¤Ëã
-    %=============¼ÆËãĞ§ÓÃ======================
+    rp(1)=g1(t)+sqrt(XGMG1)*norminv(rou,0,1);%åœ°é“é¢„ç®—
+    rp(2)=g2(t)+sqrt(XGMG2)*norminv(rou,0,1);%å…¬äº¤é¢„ç®—
+    %=============è®¡ç®—æ•ˆç”¨======================
     for i=1:celllength
         for j=1:celllength
             [utility1,utility2]=f_utility(risk,rp,xx1,xx2,px1,px2,dn,alfa,beita,lamada,i,j);
-            Futility(i,j,1,t)=utility1;%µØÌú¼Û¸ñĞ§ÓÃ
-            Futility(i,j,2,t)=utility2;%¹«½»¼Û¸ñĞ§ÓÃ
-            ET(i,j,t)=Futility(i,j,route(i,j,t),t);%Êµ¼ÊĞ§ÓÃ
-            ww(i,j,1,t+1)=exp(theita*Futility(i,j,1,t))/(exp(theita*Futility(i,j,1,t))+exp(theita*Futility(i,j,2,t)));%¸üĞÂÔËÊä·½Ê½Ñ¡Ôñ¸ÅÂÊ
-            ww(i,j,2,t+1)=1-ww(i,j,1,t+1);%¸üĞÂÔËÊä·½Ê½Ñ¡Ôñ¸ÅÂÊ
+            Futility(i,j,1,t)=utility1;%åœ°é“ä»·æ ¼æ•ˆç”¨
+            Futility(i,j,2,t)=utility2;%å…¬äº¤ä»·æ ¼æ•ˆç”¨
+            ET(i,j,t)=Futility(i,j,route(i,j,t),t);%å®é™…æ•ˆç”¨
+            ww(i,j,1,t+1)=exp(theita*Futility(i,j,1,t))/(exp(theita*Futility(i,j,1,t))+exp(theita*Futility(i,j,2,t)));%æ›´æ–°è¿è¾“æ–¹å¼é€‰æ‹©æ¦‚ç‡
+            ww(i,j,2,t+1)=1-ww(i,j,1,t+1);%æ›´æ–°è¿è¾“æ–¹å¼é€‰æ‹©æ¦‚ç‡
             if rand<=ww(i,j,1,t+1)
                 route(i,j,t+1)=1;
             else
@@ -123,29 +123,29 @@ for t=1:T_DQN
             end
         end
     end
-    %===============¸üĞÂ²ÎÕÕµã===================================
+    %===============æ›´æ–°å‚ç…§ç‚¹===================================
     for i=1:celllength
         for j=1:celllength
             sx=[];sy=[];sF=[];kk=1;
             for m=1:celllength
                 for n=1:celllength
                     if link(m,n,i,j)==1
-                        sx(kk)=m;%¼ÇÂ¼ÁÚ¾Óºá×ø±ê
-                        sy(kk)=n;%¼ÇÂ¼ÁÚ¾Ó×İ×ø±ê
-                        sF(kk)=ET(m,n,t);%¼ÇÂ¼ÁÚ¾ÓÇ°¾°Öµ
+                        sx(kk)=m;%è®°å½•é‚»å±…æ¨ªåæ ‡
+                        sy(kk)=n;%è®°å½•é‚»å±…çºµåæ ‡
+                        sF(kk)=ET(m,n,t);%è®°å½•é‚»å±…å‰æ™¯å€¼
                         kk=kk+1;
                     end
                 end
             end
-            sx(kk)=i;%¼ÇÂ¼×ÔÉíºá×ø±ê
-            sy(kk)=j;%¼ÇÂ¼×ÔÉí×İ×ø±ê
+            sx(kk)=i;%è®°å½•è‡ªèº«æ¨ªåæ ‡
+            sy(kk)=j;%è®°å½•è‡ªèº«çºµåæ ‡
             sF(kk)=ET(i,j,t);
-            %=================Ñ°ÕÒÇ°¾°Ğ§ÓÃ×î´óµÄ============
+            %=================å¯»æ‰¾å‰æ™¯æ•ˆç”¨æœ€å¤§çš„============
             if numel(sF)==0
                 risk(i,j)=risk(i,j);
             else
                 kstar=find(sF==max(sF));
-                %=================¸üĞÂ²ÎÕÕµã=============
+                %=================æ›´æ–°å‚ç…§ç‚¹=============
                 if rand<pc
                     risk(i,j)=risk(sx(kstar(1)),sy(kstar(1)));
                 end
@@ -153,12 +153,12 @@ for t=1:T_DQN
             end
         end
     end
-    %=================¸üĞÂÔËÁ¿============
+    %=================æ›´æ–°è¿é‡============
     q1(t+1)=numel(find(route(:,:,t+1)==1))/10;
     q2(t+1)=numel(find(route(:,:,t+1)==2))/10;
-    risk_num1(t+1)=numel(risk(risk==0.75))/10;%·çÏÕ°®ºÃÕßÈËÊı 
-    risk_num2(t+1)=numel(risk(risk==0.25))/10;%·çÏÕ¹æ±ÜÕßÈËÊı
-    %===============¸üĞÂ¾­Ñé»Ø·Å¼¯ºÏ====================
+    risk_num1(t+1)=numel(risk(risk==0.75))/10;%é£é™©çˆ±å¥½è€…äººæ•° 
+    risk_num2(t+1)=numel(risk(risk==0.25))/10;%é£é™©è§„é¿è€…äººæ•°
+    %===============æ›´æ–°ç»éªŒå›æ”¾é›†åˆ====================
     if p1(t+1)>min_p1&&p1(t+1)<max_p1
         REWARD=(p1(t+1)-b1)*q1(t+1)*0.01;
     elseif p1(t+1)<=min_p1||p1(t+1)>=max_p1
@@ -167,22 +167,22 @@ for t=1:T_DQN
     %NEW_STATE=[p1(t+1),p2(t+1),q1(t+1),q2(t+1),risk_num1(t),risk_num2(t)];
     NEW_STATE=[p1(t+1),p2(t+1),q1(t+1),q2(t+1)];
     D(t,:)=[STATE,A_select,REWARD,NEW_STATE];
-    %===============´Ó¾­Ñé»Ø·Å¼¯ºÏÖĞÑ¡È¡Ò»Ğ©Ñù±¾====================
+    %===============ä»ç»éªŒå›æ”¾é›†åˆä¸­é€‰å–ä¸€äº›æ ·æœ¬====================
     D_train_temp=[];
-    if t>=basic_num%ÅĞ¶Ï¼ÇÒä³ØÀïµÄÊı¾İÊÇ·ñ×ã¹»
-        c=randperm(numel(1:t));%ÖØĞÂ´òÂÒË³Ğò
-        m=basic_num;%Ñ¡³öm¸ö¾­Ñé
+    if t>=basic_num%åˆ¤æ–­è®°å¿†æ± é‡Œçš„æ•°æ®æ˜¯å¦è¶³å¤Ÿ
+        c=randperm(numel(1:t));%é‡æ–°æ‰“ä¹±é¡ºåº
+        m=basic_num;%é€‰å‡ºmä¸ªç»éªŒ
         for i=1:m
             D_train_temp(i,1:size(STATE,2)+1)=D(c(i),1:size(STATE,2)+1);
-            STATE_next=D(c(i),size(STATE,2)+3:end);%ÏÂÒ»¸ö×´Ì¬
+            STATE_next=D(c(i),size(STATE,2)+3:end);%ä¸‹ä¸€ä¸ªçŠ¶æ€
             for a_n=1:length(A)
                 x_next_S_A(:,a_n)=[STATE_next,A(a_n)]';
-                y_next_Q(a_n)=sim(net,x_next_S_A(:,a_n)); %²»Í¬¶¯×÷µÄQÖµ
+                y_next_Q(a_n)=sim(net,x_next_S_A(:,a_n)); %ä¸åŒåŠ¨ä½œçš„Qå€¼
             end
             max_Q=max(y_next_Q);
-            D_train_temp(i,size(STATE,2)+2)=D(c(i),size(STATE,2)+2)+gama*max_Q;%¸üĞÂQÖµ
+            D_train_temp(i,size(STATE,2)+2)=D(c(i),size(STATE,2)+2)+gama*max_Q;%æ›´æ–°Qå€¼
         end
-        %===============¸üĞÂQÖµÑµÁ·¼¯=================
+        %===============æ›´æ–°Qå€¼è®­ç»ƒé›†=================
         [D_train_num,~]=size(D_train);
         if isempty(D_train)==1
             D_train=D_train_temp;
@@ -206,25 +206,9 @@ for t=1:T_DQN
         net.trainParam.goal = 1e-5;
         net.trainParam.epochs = 300;
         net.trainParam.lr = 0.05;
-        net.trainParam.showWindow = 0;%ÊÇ·ñÕ¹Ê¾´°¿Ú
+        net.trainParam.showWindow = 0;%æ˜¯å¦å±•ç¤ºçª—å£
     end   
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
